@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import SDWebImage
 
 class UserCell: UITableViewCell {
   
@@ -73,10 +74,7 @@ class UserCell: UITableViewCell {
     loginLabel.text = user.login
     scoreLabel.text = formattedScoreString(score: user.score)
     urlLabel.text = user.html_url
-    avatarImageView.image = UIImage(systemName: "stop")
-    if let avatarURL = URL(string: user.avatar_url ?? "") {
-      downloadTask = avatarImageView.loadImage(url: avatarURL)
-    }
+    avatarImageView.sd_setImage(with: URL(string: user.avatar_url ?? ""), placeholderImage: UIImage(systemName: "square.fill"))
   }
   
   override func prepareForReuse() {
