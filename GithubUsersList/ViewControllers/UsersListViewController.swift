@@ -11,6 +11,7 @@ import SnapKit
 class UsersListViewController: UIViewController {
   
   private let search = Search()
+  private var currentSearchText = "swift"
   
   lazy var searchBar: UISearchBar = {
     let searchBar = UISearchBar(frame: CGRect.zero)
@@ -26,6 +27,10 @@ class UsersListViewController: UIViewController {
     tableView.delegate = self
     tableView.dataSource = self
     tableView.keyboardDismissMode = .interactive
+    let footerView = UIView(frame: CGRect(x: 0, y: 0, width: 375, height: 60))
+    footerView.backgroundColor = .systemTeal
+    tableView.tableFooterView = footerView
+    
     tableView.register(UserCell.self, forCellReuseIdentifier: CellIdentifiers.userCell)
     tableView.register(NoResultCell.self, forCellReuseIdentifier: CellIdentifiers.noResultCell)
     tableView.register(LoadingCell.self, forCellReuseIdentifier: CellIdentifiers.loadingCell)
@@ -49,21 +54,44 @@ class UsersListViewController: UIViewController {
       make.top.equalTo(self.searchBar.snp.bottom)
       make.leading.trailing.bottom.equalToSuperview()
     }
+    let refreshControl = UIRefreshControl()
+    refreshControl.addTarget(self, action: #selector(refreshWithCurrentSearchText(sender:)), for: .valueChanged)
+    tableView.refreshControl = refreshControl
+    
     performSearch(shouldRealTime: false, page: 1)
   }
   
-  func performSearch(shouldRealTime: Bool, page: Int) {
-    search.performSearch(for: searchBar.text!, page: page) { success in
+  func performSearch(shouldRealTime: Bool, page: Int, refresh: Bool = false, searchText: String? = nil) {
+    if searchText != nil && searchText != "" {
+      currentSearchText = searchText!
+    } else if searchBar.text != "" {
+      currentSearchText = searchBar.text!
+    }
+    search.performSearch(for: searchText ?? searchBar.text!, page: page, refresh: refresh) { success in
+      self.tableView.refreshControl?.endRefreshing()
       if !success {
         self.showNetworkError()
       }
-      self.tableView.reloadData()
+      if page == 1 {
+        self.tableView.reloadData()
+      } else {
+        let indexPaths = calculateIndexPathsToAdd(userArray: self.search.userArray, page: page)
+        self.tableView.insertRows(at: indexPaths, with: .none)
+      }
     }
-    tableView.reloadData()
+    if search.state != .loadingForNextPage && search.state != .loadingRefresh {
+      tableView.reloadData()
+    }
     if !shouldRealTime {
       searchBar.resignFirstResponder()
     }
     
+  }
+  
+  @objc func refreshWithCurrentSearchText(sender: UIRefreshControl) {
+    print("🎾Refresh!!")
+    sender.beginRefreshing()
+    performSearch(shouldRealTime: false, page: 1, refresh: true, searchText: currentSearchText)
   }
   
   func showNetworkError() {
@@ -75,6 +103,8 @@ class UsersListViewController: UIViewController {
     alert.addAction(action)
     present(alert, animated: true, completion: nil)
   }
+  
+  
 
 
 }
@@ -98,7 +128,7 @@ extension UsersListViewController: UITableViewDelegate, UITableViewDataSource {
       return 1
     case .noResults:
       return 1
-    case .hasResults:
+    case .hasResults, .loadingForNextPage, .loadingRefresh:
       return search.userArray.users.count
     }
   }
@@ -113,19 +143,19 @@ extension UsersListViewController: UITableViewDelegate, UITableViewDataSource {
         return cell
       case .noResults:
         return tableView.dequeueReusableCell(withIdentifier: CellIdentifiers.noResultCell,for: indexPath)
-    case .hasResults:
+    case .hasResults, .loadingForNextPage, .loadingRefresh:
         let cell = tableView.dequeueReusableCell(withIdentifier: CellIdentifiers.userCell,for: indexPath) as! UserCell
       let user = search.userArray.users[indexPath.row]
         cell.configure(for: user)
         return cell
-      }
+    }
   }
   
   func tableView(_ tableView: UITableView, willSelectRowAt indexPath: IndexPath) -> IndexPath? {
     switch search.state {
     case .notSearchedYet, .loading, .noResults:
       return nil
-    case .hasResults:
+    case .hasResults, .loadingForNextPage, .loadingRefresh:
       return indexPath
     }
   }
@@ -135,7 +165,7 @@ extension UsersListViewController: UITableViewDelegate, UITableViewDataSource {
     switch search.state {
     case .notSearchedYet, .loading, .noResults:
       break
-    case .hasResults:
+    case .hasResults, .loadingForNextPage, .loadingRefresh:
       let userDetailController = UserDetailViewController()
       userDetailController.urlString = search.userArray.users[indexPath.row].html_url ?? "https://github.com/swift"
       self.navigationController?.pushViewController(userDetailController, animated: true)
@@ -147,8 +177,21 @@ extension UsersListViewController: UITableViewDelegate, UITableViewDataSource {
     switch search.state {
     case .notSearchedYet, .loading, .noResults:
       return tableView.frame.height - 20
-    case .hasResults:
+    case .hasResults, .loadingForNextPage, .loadingRefresh:
       return 80
+    }
+  }
+  
+  func scrollViewDidScroll(_ scrollView: UIScrollView) {
+    let height = scrollView.frame.size.height
+    let contentYoffset = scrollView.contentOffset.y
+    let distanceFromBottom = scrollView.contentSize.height - contentYoffset
+    if distanceFromBottom < height {
+      print("🏀To Last!")
+      let userArray = search.userArray
+      if (userArray.total_count - userArray.users.count > 0) && search.state != .loadingForNextPage {
+        performSearch(shouldRealTime: false, page: userArray.users.count / 30 + 1)
+      }
     }
   }
   

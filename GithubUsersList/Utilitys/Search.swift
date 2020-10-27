@@ -14,6 +14,8 @@ class Search {
   enum State {
     case notSearchedYet
     case loading
+    case loadingRefresh
+    case loadingForNextPage
     case noResults
     case hasResults
   }
@@ -40,10 +42,14 @@ class Search {
     }
   }
 
-  func performSearch(for text: String, page: Int, completion: @escaping SearchComplete) {
+  func performSearch(for text: String, page: Int, refresh: Bool, completion: @escaping SearchComplete) {
     if !text.isEmpty {
       dataTask?.cancel()
-      state = .loading
+      if page == 1 {
+        state = refresh ? .loadingRefresh : .loading
+      } else {
+        state = .loadingForNextPage
+      }
       
       let url = searchURL(searchText: text, page: page)
       let session = URLSession.shared
