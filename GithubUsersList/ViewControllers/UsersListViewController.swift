@@ -49,18 +49,21 @@ class UsersListViewController: UIViewController {
       make.top.equalTo(self.searchBar.snp.bottom)
       make.leading.trailing.bottom.equalToSuperview()
     }
-    performSearch()
+    performSearch(shouldRealTime: false, page: 1)
   }
   
-  func performSearch() {
-    search.performSearch(for: searchBar.text!) { success in
+  func performSearch(shouldRealTime: Bool, page: Int) {
+    search.performSearch(for: searchBar.text!, page: page) { success in
       if !success {
         self.showNetworkError()
       }
       self.tableView.reloadData()
     }
     tableView.reloadData()
-    searchBar.resignFirstResponder()
+    if !shouldRealTime {
+      searchBar.resignFirstResponder()
+    }
+    
   }
   
   func showNetworkError() {
@@ -78,9 +81,12 @@ class UsersListViewController: UIViewController {
 
 extension UsersListViewController: UISearchBarDelegate {
   func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
-    performSearch()
+    performSearch(shouldRealTime: false, page: 1)
   }
   
+  func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+    performSearch(shouldRealTime: true, page: 1)
+  }
 }
 
 extension UsersListViewController: UITableViewDelegate, UITableViewDataSource {
@@ -92,8 +98,8 @@ extension UsersListViewController: UITableViewDelegate, UITableViewDataSource {
       return 1
     case .noResults:
       return 1
-    case .results(let users):
-      return users.count
+    case .hasResults:
+      return search.userArray.users.count
     }
   }
   
@@ -107,9 +113,9 @@ extension UsersListViewController: UITableViewDelegate, UITableViewDataSource {
         return cell
       case .noResults:
         return tableView.dequeueReusableCell(withIdentifier: CellIdentifiers.noResultCell,for: indexPath)
-      case .results(let users):
+    case .hasResults:
         let cell = tableView.dequeueReusableCell(withIdentifier: CellIdentifiers.userCell,for: indexPath) as! UserCell
-        let user = users[indexPath.row]
+      let user = search.userArray.users[indexPath.row]
         cell.configure(for: user)
         return cell
       }
@@ -119,7 +125,7 @@ extension UsersListViewController: UITableViewDelegate, UITableViewDataSource {
     switch search.state {
     case .notSearchedYet, .loading, .noResults:
       return nil
-    case .results:
+    case .hasResults:
       return indexPath
     }
   }
@@ -129,9 +135,9 @@ extension UsersListViewController: UITableViewDelegate, UITableViewDataSource {
     switch search.state {
     case .notSearchedYet, .loading, .noResults:
       break
-    case .results(let users):
+    case .hasResults:
       let userDetailController = UserDetailViewController()
-      userDetailController.urlString = users[indexPath.row].html_url ?? "https://github.com/swift"
+      userDetailController.urlString = search.userArray.users[indexPath.row].html_url ?? "https://github.com/swift"
       self.navigationController?.pushViewController(userDetailController, animated: true)
     }
     
@@ -140,8 +146,8 @@ extension UsersListViewController: UITableViewDelegate, UITableViewDataSource {
   func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
     switch search.state {
     case .notSearchedYet, .loading, .noResults:
-      return tableView.frame.height
-    case .results:
+      return tableView.frame.height - 20
+    case .hasResults:
       return 80
     }
   }

@@ -8,7 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		D33A3A7F2547BC13001C414F /* LoadingCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D33A3A7E2547BC13001C414F /* LoadingCell.swift */; };
-		D33A3A8F2547D3B4001C414F /* UIImageView+DownloadImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = D33A3A8E2547D3B4001C414F /* UIImageView+DownloadImage.swift */; };
 		D33A3A942547DD98001C414F /* Search.swift in Sources */ = {isa = PBXBuildFile; fileRef = D33A3A932547DD98001C414F /* Search.swift */; };
 		D33A3A992547F0F6001C414F /* UserDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D33A3A982547F0F6001C414F /* UserDetailViewController.swift */; };
 		D33A3AA625484E59001C414F /* SDWebImage in Frameworks */ = {isa = PBXBuildFile; productRef = D33A3AA525484E59001C414F /* SDWebImage */; };
@@ -46,7 +45,6 @@
 
 /* Begin PBXFileReference section */
 		D33A3A7E2547BC13001C414F /* LoadingCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadingCell.swift; sourceTree = "<group>"; };
-		D33A3A8E2547D3B4001C414F /* UIImageView+DownloadImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIImageView+DownloadImage.swift"; sourceTree = "<group>"; };
 		D33A3A932547DD98001C414F /* Search.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Search.swift; sourceTree = "<group>"; };
 		D33A3A982547F0F6001C414F /* UserDetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserDetailViewController.swift; sourceTree = "<group>"; };
 		D3683DB825467A0600FD2320 /* GithubUsersList.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = GithubUsersList.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -121,7 +119,6 @@
 				D33A3A932547DD98001C414F /* Search.swift */,
 				D3683E2F25473A0C00FD2320 /* Utility.swift */,
 				D3683E1C254714E300FD2320 /* CellIdentifiers.swift */,
-				D33A3A8E2547D3B4001C414F /* UIImageView+DownloadImage.swift */,
 			);
 			path = Utilitys;
 			sourceTree = "<group>";
@@ -331,7 +328,6 @@
 				D3683DFE2546891000FD2320 /* DataModel.swift in Sources */,
 				D3683DC025467A0600FD2320 /* UsersListViewController.swift in Sources */,
 				D3683DBC25467A0600FD2320 /* AppDelegate.swift in Sources */,
-				D33A3A8F2547D3B4001C414F /* UIImageView+DownloadImage.swift in Sources */,
 				D3683E3025473A0C00FD2320 /* Utility.swift in Sources */,
 				D3683E22254715C400FD2320 /* NoResultCell.swift in Sources */,
 				D33A3A7F2547BC13001C414F /* LoadingCell.swift in Sources */,

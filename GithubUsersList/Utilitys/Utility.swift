@@ -13,3 +13,5 @@ func formattedScoreString(score: Float) -> String {
   formatter.minimumIntegerDigits = 1
   return formatter.string(from: NSNumber(value: score))!
 }
+
+
