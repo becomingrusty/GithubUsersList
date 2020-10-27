@@ -8,6 +8,9 @@
 
 /* Begin PBXBuildFile section */
 		D33A3A7F2547BC13001C414F /* LoadingCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D33A3A7E2547BC13001C414F /* LoadingCell.swift */; };
+		D33A3A8F2547D3B4001C414F /* UIImageView+DownloadImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = D33A3A8E2547D3B4001C414F /* UIImageView+DownloadImage.swift */; };
+		D33A3A942547DD98001C414F /* Search.swift in Sources */ = {isa = PBXBuildFile; fileRef = D33A3A932547DD98001C414F /* Search.swift */; };
+		D33A3A992547F0F6001C414F /* UserDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D33A3A982547F0F6001C414F /* UserDetailViewController.swift */; };
 		D3683DBC25467A0600FD2320 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3683DBB25467A0600FD2320 /* AppDelegate.swift */; };
 		D3683DBE25467A0600FD2320 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3683DBD25467A0600FD2320 /* SceneDelegate.swift */; };
 		D3683DC025467A0600FD2320 /* UsersListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3683DBF25467A0600FD2320 /* UsersListViewController.swift */; };
@@ -42,6 +45,9 @@
 
 /* Begin PBXFileReference section */
 		D33A3A7E2547BC13001C414F /* LoadingCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadingCell.swift; sourceTree = "<group>"; };
+		D33A3A8E2547D3B4001C414F /* UIImageView+DownloadImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIImageView+DownloadImage.swift"; sourceTree = "<group>"; };
+		D33A3A932547DD98001C414F /* Search.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Search.swift; sourceTree = "<group>"; };
+		D33A3A982547F0F6001C414F /* UserDetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserDetailViewController.swift; sourceTree = "<group>"; };
 		D3683DB825467A0600FD2320 /* GithubUsersList.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = GithubUsersList.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D3683DBB25467A0600FD2320 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		D3683DBD25467A0600FD2320 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -88,6 +94,44 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		D33A3A9D2547F72A001C414F /* ViewControllers */ = {
+			isa = PBXGroup;
+			children = (
+				D3683DBF25467A0600FD2320 /* UsersListViewController.swift */,
+				D33A3A982547F0F6001C414F /* UserDetailViewController.swift */,
+			);
+			path = ViewControllers;
+			sourceTree = "<group>";
+		};
+		D33A3A9E2547F745001C414F /* Cells */ = {
+			isa = PBXGroup;
+			children = (
+				D3683E172546BD4600FD2320 /* UserCell.swift */,
+				D3683E21254715C400FD2320 /* NoResultCell.swift */,
+				D33A3A7E2547BC13001C414F /* LoadingCell.swift */,
+			);
+			path = Cells;
+			sourceTree = "<group>";
+		};
+		D33A3A9F2547F76C001C414F /* Utilitys */ = {
+			isa = PBXGroup;
+			children = (
+				D33A3A932547DD98001C414F /* Search.swift */,
+				D3683E2F25473A0C00FD2320 /* Utility.swift */,
+				D3683E1C254714E300FD2320 /* CellIdentifiers.swift */,
+				D33A3A8E2547D3B4001C414F /* UIImageView+DownloadImage.swift */,
+			);
+			path = Utilitys;
+			sourceTree = "<group>";
+		};
+		D33A3AA02547F7A3001C414F /* DataModel */ = {
+			isa = PBXGroup;
+			children = (
+				D3683DFD2546891000FD2320 /* DataModel.swift */,
+			);
+			path = DataModel;
+			sourceTree = "<group>";
+		};
 		D3683DAF25467A0600FD2320 = {
 			isa = PBXGroup;
 			children = (
@@ -113,16 +157,13 @@
 			children = (
 				D3683DBB25467A0600FD2320 /* AppDelegate.swift */,
 				D3683DBD25467A0600FD2320 /* SceneDelegate.swift */,
-				D3683DFD2546891000FD2320 /* DataModel.swift */,
-				D3683DBF25467A0600FD2320 /* UsersListViewController.swift */,
+				D33A3AA02547F7A3001C414F /* DataModel */,
+				D33A3A9D2547F72A001C414F /* ViewControllers */,
+				D33A3A9E2547F745001C414F /* Cells */,
+				D33A3A9F2547F76C001C414F /* Utilitys */,
 				D3683DC425467A0C00FD2320 /* Assets.xcassets */,
 				D3683DC625467A0C00FD2320 /* LaunchScreen.storyboard */,
 				D3683DC925467A0C00FD2320 /* Info.plist */,
-				D3683E172546BD4600FD2320 /* UserCell.swift */,
-				D3683E21254715C400FD2320 /* NoResultCell.swift */,
-				D33A3A7E2547BC13001C414F /* LoadingCell.swift */,
-				D3683E1C254714E300FD2320 /* CellIdentifiers.swift */,
-				D3683E2F25473A0C00FD2320 /* Utility.swift */,
 			);
 			path = GithubUsersList;
 			sourceTree = "<group>";
@@ -280,10 +321,13 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D33A3A942547DD98001C414F /* Search.swift in Sources */,
 				D3683E1D254714E300FD2320 /* CellIdentifiers.swift in Sources */,
+				D33A3A992547F0F6001C414F /* UserDetailViewController.swift in Sources */,
 				D3683DFE2546891000FD2320 /* DataModel.swift in Sources */,
 				D3683DC025467A0600FD2320 /* UsersListViewController.swift in Sources */,
 				D3683DBC25467A0600FD2320 /* AppDelegate.swift in Sources */,
+				D33A3A8F2547D3B4001C414F /* UIImageView+DownloadImage.swift in Sources */,
 				D3683E3025473A0C00FD2320 /* Utility.swift in Sources */,
 				D3683E22254715C400FD2320 /* NoResultCell.swift in Sources */,
 				D33A3A7F2547BC13001C414F /* LoadingCell.swift in Sources */,

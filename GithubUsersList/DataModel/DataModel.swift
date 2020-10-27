@@ -4,6 +4,7 @@
 //
 //  Created by Rusty on 2020/10/26.
 //
+import UIKit
 
 class UserArray: Codable {
   var total_count = 0

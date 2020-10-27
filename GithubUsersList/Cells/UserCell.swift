@@ -9,10 +9,12 @@ import UIKit
 
 class UserCell: UITableViewCell {
   
+  var downloadTask: URLSessionDownloadTask?
+  
   lazy var avatarImageView: UIImageView = {
     let imageView = UIImageView()
     imageView.contentMode = .scaleAspectFit
-    imageView.image = UIImage(systemName: "stop")
+    //imageView.image = UIImage(systemName: "stop")
     imageView.tintColor = .systemGray
     return imageView
   }()
@@ -59,13 +61,28 @@ class UserCell: UITableViewCell {
       make.trailing.equalTo(scoreLabel.snp.leading).offset(-8)
       
     }
-    
     contentView.addSubview(urlLabel)
     urlLabel.snp.makeConstraints { (make) in
       make.leading.equalTo(avatarImageView.snp.trailing).offset(8)
       make.trailing.equalToSuperview().offset(8)
       make.bottom.equalTo(avatarImageView.snp.bottom).offset(-8)
     }
+  }
+  
+  func configure(for user: User) {
+    loginLabel.text = user.login
+    scoreLabel.text = formattedScoreString(score: user.score)
+    urlLabel.text = user.html_url
+    avatarImageView.image = UIImage(systemName: "stop")
+    if let avatarURL = URL(string: user.avatar_url ?? "") {
+      downloadTask = avatarImageView.loadImage(url: avatarURL)
+    }
+  }
+  
+  override func prepareForReuse() {
+    super.prepareForReuse()
+    downloadTask?.cancel()
+    downloadTask = nil
   }
   
   required init?(coder: NSCoder) {

@@ -10,11 +10,12 @@ import SnapKit
 
 class UsersListViewController: UIViewController {
   
-  var users = [User]()
+  private let search = Search()
   
   lazy var searchBar: UISearchBar = {
     let searchBar = UISearchBar(frame: CGRect.zero)
     searchBar.placeholder = "Search for github user"
+    searchBar.text = "swift"
     searchBar.sizeToFit()
     searchBar.delegate = self
     return searchBar
@@ -30,9 +31,6 @@ class UsersListViewController: UIViewController {
     tableView.register(LoadingCell.self, forCellReuseIdentifier: CellIdentifiers.loadingCell)
     return tableView
   }()
-  
-  var hasSearched = false
-  var isLoading = false
 
   override func viewDidLoad() {
     super.viewDidLoad()
@@ -51,34 +49,18 @@ class UsersListViewController: UIViewController {
       make.top.equalTo(self.searchBar.snp.bottom)
       make.leading.trailing.bottom.equalToSuperview()
     }
+    performSearch()
   }
   
-  func searchURL(searchText: String) -> URL {
-    let encodedText = searchText.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)!
-    let urlString = String(format: "https://api.github.com/search/users?q=%@&page=1", encodedText)
-    let url = URL(string: urlString)
-    return url!
-  }
-  
-  func performSearchRequest(with url: URL) -> Data? {
-    do {
-      return try Data(contentsOf: url)
-    } catch  {
-      print("Download Error: \(error.localizedDescription)")
-      showNetworkError()
-      return nil
+  func performSearch() {
+    search.performSearch(for: searchBar.text!) { success in
+      if !success {
+        self.showNetworkError()
+      }
+      self.tableView.reloadData()
     }
-  }
-  
-  func parse(data: Data) -> [User] {
-    do {
-      let decoder = JSONDecoder()
-      let result = try decoder.decode(UserArray.self, from: data)
-      return result.users
-    } catch {
-      print("JSON Error: \(error)")
-      return []
-    }
+    tableView.reloadData()
+    searchBar.resignFirstResponder()
   }
   
   func showNetworkError() {
@@ -96,75 +78,70 @@ class UsersListViewController: UIViewController {
 
 extension UsersListViewController: UISearchBarDelegate {
   func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
-    if !searchBar.text!.isEmpty {
-      searchBar.resignFirstResponder()
-      isLoading = true
-      tableView.reloadData()
-      hasSearched = true
-      users = []
-      let queue = DispatchQueue.global()
-      let url = searchURL(searchText: searchBar.text!)
-      queue.async {
-        if let data = self.performSearchRequest(with: url) {
-          self.users = self.parse(data: data)
-          DispatchQueue.main.async {
-            self.isLoading = false
-            self.tableView.reloadData()
-          }
-          return
-        }
-      }
-    }
+    performSearch()
   }
   
 }
 
 extension UsersListViewController: UITableViewDelegate, UITableViewDataSource {
   func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-    if isLoading {
-      return 1
-    } else if !hasSearched {
+    switch search.state {
+    case .notSearchedYet:
       return 0
-    } else if users.count == 0 {
+    case .loading:
       return 1
-    } else {
+    case .noResults:
+      return 1
+    case .results(let users):
       return users.count
     }
   }
   
   func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-    if isLoading {
-      let cell = tableView.dequeueReusableCell(withIdentifier: CellIdentifiers.loadingCell, for: indexPath) as! LoadingCell
-      cell.indicator.startAnimating()
-      return cell
-    } else if users.count == 0 {
-      return tableView.dequeueReusableCell(withIdentifier: CellIdentifiers.noResultCell, for: indexPath) 
-    } else {
-      let cell = tableView.dequeueReusableCell(withIdentifier: CellIdentifiers.userCell, for: indexPath) as! UserCell
-      let user = users[indexPath.row]
-      cell.loginLabel.text = user.login
-      cell.scoreLabel.text = formattedScoreString(score: user.score)
-      cell.urlLabel.text = user.html_url
-      return cell
-    }
+    switch search.state {
+      case .notSearchedYet:
+        fatalError("Fatal Error")
+      case .loading:
+        let cell = tableView.dequeueReusableCell(withIdentifier: CellIdentifiers.loadingCell, for: indexPath) as! LoadingCell
+        cell.indicator.startAnimating()
+        return cell
+      case .noResults:
+        return tableView.dequeueReusableCell(withIdentifier: CellIdentifiers.noResultCell,for: indexPath)
+      case .results(let users):
+        let cell = tableView.dequeueReusableCell(withIdentifier: CellIdentifiers.userCell,for: indexPath) as! UserCell
+        let user = users[indexPath.row]
+        cell.configure(for: user)
+        return cell
+      }
   }
   
   func tableView(_ tableView: UITableView, willSelectRowAt indexPath: IndexPath) -> IndexPath? {
-    if users.count == 0 || isLoading {
+    switch search.state {
+    case .notSearchedYet, .loading, .noResults:
       return nil
-    } else {
+    case .results:
       return indexPath
     }
   }
   
   func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
     tableView.deselectRow(at: indexPath, animated: true)
+    switch search.state {
+    case .notSearchedYet, .loading, .noResults:
+      break
+    case .results(let users):
+      let userDetailController = UserDetailViewController()
+      userDetailController.urlString = users[indexPath.row].html_url ?? "https://github.com/swift"
+      self.navigationController?.pushViewController(userDetailController, animated: true)
+    }
+    
   }
   
   func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-    if users.count == 0 {
+    switch search.state {
+    case .notSearchedYet, .loading, .noResults:
       return tableView.frame.height
-    } else {
+    case .results:
       return 80
     }
   }
