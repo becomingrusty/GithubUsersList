@@ -31,6 +31,10 @@ class Search {
     return url!
   }
   
+  func resetUserArray() {
+    userArray = UserArray()
+  }
+  
   private func parse(data: Data) -> UserArray {
     do {
       let decoder = JSONDecoder()

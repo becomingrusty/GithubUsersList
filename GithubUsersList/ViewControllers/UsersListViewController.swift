@@ -28,7 +28,7 @@ class UsersListViewController: UIViewController {
     tableView.dataSource = self
     tableView.keyboardDismissMode = .interactive
     let footerView = UIView(frame: CGRect(x: 0, y: 0, width: 375, height: 60))
-    footerView.backgroundColor = .systemTeal
+    footerView.backgroundColor = .none
     tableView.tableFooterView = footerView
     
     tableView.register(UserCell.self, forCellReuseIdentifier: CellIdentifiers.userCell)
@@ -69,9 +69,11 @@ class UsersListViewController: UIViewController {
     }
     search.performSearch(for: searchText ?? searchBar.text!, page: page, refresh: refresh) { success in
       self.tableView.refreshControl?.endRefreshing()
+      self.tableView.tableFooterView?.backgroundColor = .none
       if !success {
         self.showNetworkError()
       }
+      print("Page: \(page)")
       if page == 1 {
         self.tableView.reloadData()
       } else {
@@ -91,6 +93,7 @@ class UsersListViewController: UIViewController {
   @objc func refreshWithCurrentSearchText(sender: UIRefreshControl) {
     print("🎾Refresh!!")
     sender.beginRefreshing()
+    search.resetUserArray()
     performSearch(shouldRealTime: false, page: 1, refresh: true, searchText: currentSearchText)
   }
   
@@ -111,10 +114,12 @@ class UsersListViewController: UIViewController {
 
 extension UsersListViewController: UISearchBarDelegate {
   func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
+    search.resetUserArray()
     performSearch(shouldRealTime: false, page: 1)
   }
   
   func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+    search.resetUserArray()
     performSearch(shouldRealTime: true, page: 1)
   }
 }
@@ -182,14 +187,25 @@ extension UsersListViewController: UITableViewDelegate, UITableViewDataSource {
     }
   }
   
+  func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
+    switch search.state {
+    case .notSearchedYet, .loading, .noResults, .hasResults, .loadingRefresh:
+      return 0.01
+    default:
+      return 60
+    }
+  }
+  
+  
+  
   func scrollViewDidScroll(_ scrollView: UIScrollView) {
     let height = scrollView.frame.size.height
     let contentYoffset = scrollView.contentOffset.y
     let distanceFromBottom = scrollView.contentSize.height - contentYoffset
     if distanceFromBottom < height {
-      print("🏀To Last!")
       let userArray = search.userArray
-      if (userArray.total_count - userArray.users.count > 0) && search.state != .loadingForNextPage {
+      if (userArray.total_count - userArray.users.count > 0) && search.state != .loadingForNextPage && search.state != .loading {
+        tableView.tableFooterView?.backgroundColor = .systemTeal
         performSearch(shouldRealTime: false, page: userArray.users.count / 30 + 1)
       }
     }
