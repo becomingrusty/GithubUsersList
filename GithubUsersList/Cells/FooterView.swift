@@ -17,7 +17,6 @@ class FooterView: UIView {
   
   var currentState: FooterViewState = .hiding {
     didSet {
-      print("FooterView State Did Set")
       updateViewByCurrentState()
     }
   }
@@ -50,7 +49,6 @@ class FooterView: UIView {
     noResultLabel.snp.makeConstraints { (make) in
       make.center.equalToSuperview()
     }
-    //currentState = .hiding
     updateViewByCurrentState()
   }
   
@@ -59,7 +57,6 @@ class FooterView: UIView {
   
   
   func updateViewByCurrentState() {
-    print("updateViewByCurrentState")
     switch currentState {
     case .hiding:
       indicator.isHidden = true

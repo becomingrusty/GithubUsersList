@@ -59,7 +59,7 @@ class UsersListViewController: UIViewController {
     let refreshControl = UIRefreshControl()
     refreshControl.addTarget(self, action: #selector(refreshWithCurrentSearchText(sender:)), for: .valueChanged)
     tableView.refreshControl = refreshControl
-    var footerView = FooterView(frame: CGRect(x: 0, y: 0, width: tableView.bounds.width, height: 60))
+    let footerView = FooterView(frame: CGRect(x: 0, y: 0, width: tableView.bounds.width, height: 60))
     tableView.tableFooterView = footerView
     
     
@@ -79,11 +79,9 @@ class UsersListViewController: UIViewController {
       if !success {
         self.showNetworkError()
       }
-      print("Page: \(page)")
       if page == 1 {
         self.tableView.reloadData()
       } else {
-        print("UsersCount: \(self.search.userArray.users.count)")
         let indexPaths = calculateIndexPathsToAdd(userArray: self.search.userArray, page: page)
         self.tableView.insertRows(at: indexPaths, with: .none)
       }
@@ -119,7 +117,6 @@ class UsersListViewController: UIViewController {
   func footerView() -> FooterView? {
     return tableView.tableFooterView as? FooterView
   }
-
 
 }
 
@@ -207,8 +204,6 @@ extension UsersListViewController: UITableViewDelegate, UITableViewDataSource {
     }
   }
   
-  
-  
   func scrollViewDidScroll(_ scrollView: UIScrollView) {
     let height = scrollView.frame.size.height
     let contentYoffset = scrollView.contentOffset.y
@@ -217,11 +212,9 @@ extension UsersListViewController: UITableViewDelegate, UITableViewDataSource {
       
       let userArray = search.userArray
       if (userArray.total_count - userArray.users.count > 0) && search.state == .hasResults && footerView()!.currentState == .hiding {
-        print("Should Show Loading More Results")
         footerView()!.currentState = .loading
         performSearch(shouldRealTime: false, page: userArray.users.count / 30 + 1)
       } else if (userArray.total_count == userArray.users.count) && search.state == .hasResults && footerView()!.currentState != .loading {
-        print("Should Show No More Result")
         footerView()!.currentState = .noMoreResults
       }
     }
