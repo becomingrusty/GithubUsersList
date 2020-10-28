@@ -24,6 +24,7 @@
 		D3683E1D254714E300FD2320 /* CellIdentifiers.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3683E1C254714E300FD2320 /* CellIdentifiers.swift */; };
 		D3683E22254715C400FD2320 /* NoResultCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3683E21254715C400FD2320 /* NoResultCell.swift */; };
 		D3683E3025473A0C00FD2320 /* Utility.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3683E2F25473A0C00FD2320 /* Utility.swift */; };
+		D3D4AE8725491A460081B886 /* FooterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3D4AE8625491A460081B886 /* FooterView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -65,6 +66,7 @@
 		D3683E1C254714E300FD2320 /* CellIdentifiers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CellIdentifiers.swift; sourceTree = "<group>"; };
 		D3683E21254715C400FD2320 /* NoResultCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoResultCell.swift; sourceTree = "<group>"; };
 		D3683E2F25473A0C00FD2320 /* Utility.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Utility.swift; sourceTree = "<group>"; };
+		D3D4AE8625491A460081B886 /* FooterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FooterView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -109,6 +111,7 @@
 				D3683E172546BD4600FD2320 /* UserCell.swift */,
 				D3683E21254715C400FD2320 /* NoResultCell.swift */,
 				D33A3A7E2547BC13001C414F /* LoadingCell.swift */,
+				D3D4AE8625491A460081B886 /* FooterView.swift */,
 			);
 			path = Cells;
 			sourceTree = "<group>";
@@ -331,6 +334,7 @@
 				D3683E3025473A0C00FD2320 /* Utility.swift in Sources */,
 				D3683E22254715C400FD2320 /* NoResultCell.swift in Sources */,
 				D33A3A7F2547BC13001C414F /* LoadingCell.swift in Sources */,
+				D3D4AE8725491A460081B886 /* FooterView.swift in Sources */,
 				D3683E182546BD4600FD2320 /* UserCell.swift in Sources */,
 				D3683DBE25467A0600FD2320 /* SceneDelegate.swift in Sources */,
 			);

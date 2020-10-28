@@ -36,6 +36,8 @@ class UsersListViewController: UIViewController {
     tableView.register(LoadingCell.self, forCellReuseIdentifier: CellIdentifiers.loadingCell)
     return tableView
   }()
+  
+  
 
   override func viewDidLoad() {
     super.viewDidLoad()
@@ -57,6 +59,9 @@ class UsersListViewController: UIViewController {
     let refreshControl = UIRefreshControl()
     refreshControl.addTarget(self, action: #selector(refreshWithCurrentSearchText(sender:)), for: .valueChanged)
     tableView.refreshControl = refreshControl
+    var footerView = FooterView(frame: CGRect(x: 0, y: 0, width: tableView.bounds.width, height: 60))
+    tableView.tableFooterView = footerView
+    
     
     performSearch(shouldRealTime: false, page: 1)
   }
@@ -70,6 +75,7 @@ class UsersListViewController: UIViewController {
     search.performSearch(for: searchText ?? searchBar.text!, page: page, refresh: refresh) { success in
       self.tableView.refreshControl?.endRefreshing()
       self.tableView.tableFooterView?.backgroundColor = .none
+      self.footerView()!.currentState = self.search.userArray.total_count == self.search.userArray.users.count ? .noMoreResults : .hiding
       if !success {
         self.showNetworkError()
       }
@@ -77,12 +83,16 @@ class UsersListViewController: UIViewController {
       if page == 1 {
         self.tableView.reloadData()
       } else {
+        print("UsersCount: \(self.search.userArray.users.count)")
         let indexPaths = calculateIndexPathsToAdd(userArray: self.search.userArray, page: page)
         self.tableView.insertRows(at: indexPaths, with: .none)
       }
     }
     if search.state != .loadingForNextPage && search.state != .loadingRefresh {
       tableView.reloadData()
+    }
+    if search.state != .loadingForNextPage {
+      footerView()!.currentState = .hiding
     }
     if !shouldRealTime {
       searchBar.resignFirstResponder()
@@ -91,9 +101,8 @@ class UsersListViewController: UIViewController {
   }
   
   @objc func refreshWithCurrentSearchText(sender: UIRefreshControl) {
-    print("🎾Refresh!!")
     sender.beginRefreshing()
-    search.resetUserArray()
+    //search.resetUserArray()
     performSearch(shouldRealTime: false, page: 1, refresh: true, searchText: currentSearchText)
   }
   
@@ -107,7 +116,9 @@ class UsersListViewController: UIViewController {
     present(alert, animated: true, completion: nil)
   }
   
-  
+  func footerView() -> FooterView? {
+    return tableView.tableFooterView as? FooterView
+  }
 
 
 }
@@ -203,10 +214,15 @@ extension UsersListViewController: UITableViewDelegate, UITableViewDataSource {
     let contentYoffset = scrollView.contentOffset.y
     let distanceFromBottom = scrollView.contentSize.height - contentYoffset
     if distanceFromBottom < height {
+      
       let userArray = search.userArray
-      if (userArray.total_count - userArray.users.count > 0) && search.state != .loadingForNextPage && search.state != .loading {
-        tableView.tableFooterView?.backgroundColor = .systemTeal
+      if (userArray.total_count - userArray.users.count > 0) && search.state == .hasResults && footerView()!.currentState == .hiding {
+        print("Should Show Loading More Results")
+        footerView()!.currentState = .loading
         performSearch(shouldRealTime: false, page: userArray.users.count / 30 + 1)
+      } else if (userArray.total_count == userArray.users.count) && search.state == .hasResults && footerView()!.currentState != .loading {
+        print("Should Show No More Result")
+        footerView()!.currentState = .noMoreResults
       }
     }
   }
