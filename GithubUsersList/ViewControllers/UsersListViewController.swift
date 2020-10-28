@@ -75,16 +75,16 @@ class UsersListViewController: UIViewController {
     search.performSearch(for: searchText ?? searchBar.text!, page: page, refresh: refresh) { success in
       self.tableView.refreshControl?.endRefreshing()
       self.tableView.tableFooterView?.backgroundColor = .none
-      self.footerView()!.currentState = self.search.userArray.total_count == self.search.userArray.users.count ? .noMoreResults : .hiding
+      self.footerView()!.currentState = (self.search.userArray.total_count == self.search.userArray.users.count && self.search.state != .noResults) ? .noMoreResults : .hiding
       if !success {
         self.showNetworkError()
       }
-      if page == 1 {
+      //if page == 1 {
         self.tableView.reloadData()
-      } else {
-        let indexPaths = calculateIndexPathsToAdd(userArray: self.search.userArray, page: page)
-        self.tableView.insertRows(at: indexPaths, with: .none)
-      }
+      //} else {
+        //let indexPaths = calculateIndexPathsToAdd(userArray: self.search.userArray, page: page)
+        //self.tableView.insertRows(at: indexPaths, with: .none)
+      //}
     }
     if search.state != .loadingForNextPage && search.state != .loadingRefresh {
       tableView.reloadData()
